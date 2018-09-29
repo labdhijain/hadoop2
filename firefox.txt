@@ -1,0 +1,18 @@
+for download firefox
+
+1.) wget https://www.techspot.com/downloads/downloadnow/4981/?evp=b0f1a12b7c55faef3c2210764118f17f&file=1 OR OPEN LINK IN BROWSER AND DOWNLOAD FIREFOX
+
+2.) unzip file OR tar -xvzf filename.tar
+
+3.)check firefox version
+ #   firefox -v
+
+4.)mv firefox /opt/firefox_latest
+
+5.)cd /usr/bin
+
+6.)mv firefox /opt/firefox_old
+
+7.)ln -s /opt/firefox_latest/firefox /usr/bin/firefox
+
+8.)firefox -v (getting latest version))
