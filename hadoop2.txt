@@ -1,0 +1,301 @@
+Note:   You can use hostname command to setup hostname of any system  as given below
+
+Step 1 :   setup  hostname  accordingly
+
+[root@namenode~]# hostnamectl set-hostname  namenode.cluster1.com
+
+For Making  it persistant
+
+[root@namenode ~]# cat  /etc/hostname
+NETWORKING=yes
+HOSTNAME=namenode.cluster1.com
+
+
+
+Step 2 :    Make  your local DNS   on  every system this file will look like this
+
+[root@namenode ~]#    cat   /etc/hosts
+
+
+192.168.0.254         namenode.cluster1.com
+192.168.0.201         datanode1.cluster1.com
+192.168.0.202         datanode2.cluster1.com
+192.168.0.203         datanode3.cluster1.com
+
+
+Step  3 :   Flush   firewall  and  disable  Selinux   on  each  node
+
+[root@server76 ~]# setenforce  0
+[root@server76 ~]# iptables -F
+OR
+0
+[root@server76 ~]# systemctl disable --now firewalld   #  for production you can add firewall ruels
+
+
+Step  4:   make sure you have  yum configured  for software installation or you can download from apache on  each  node
+
+
+[root@server76 ~]#
+
+System 1:   (NameNode)
+
+IP Address :     192.168.0.254
+Hostname   :       namenode.cluster1.com
+
+
+System 2:     (DataNode)
+
+IP Address :     192.168.0.200
+Hostname   :       datanode1.cluster1.com
+
+
+
+System  3:     (DataNode)
+
+IP Address :     192.168.0.202
+Hostname   :       datanode2.cluster1.com
+
+
+
+System 4:      (DataNode)
+
+IP Address :     192.168.0.203
+Hostname   :       datanode3.cluster1.com
+
+
+
+Note:   For making  hadoop cluster  you need to  install  java jdk  1.8 or higher   hadoop 2  on each  node
+
+Important:    i  am assuming  that you have already yum  client  configured  of you can download software from  oracle or apache  website.
+
+
+Hadoop v2  cluster setup :
+---------------------------------
+
+Required software  : 
+
+1.  Download  apache hadoop version  2.7 or later from  given below link
+
+https://archive.apache.org/dist/hadoop/core/
+
+2.  Download jdk 1.8  from oracle  website 
+
+http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+
+3.  setting  jdk path 
+
+[namenode.cluster1.com ]#  cat  /root/.bashrc
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+ . /etc/bashrc
+fi
+
+
+JAVA_HOME=/usr/java/jdk1.8.0_121
+
+
+4.  Installing  apache  hadoop from tar
+
+[root@namenode hadoop]# tar  -xvzf  hadoop-2.7.3.tar.gz
+
+move this to /  for permission and security reason
+
+[root@namenode hadoop]#   mv  hadoop-2.7.3  /hadoop2
+
+Important : file must be look like this.
+
+
+[root@station53 hadoop]# cat /root/.bashrc
+# .bashrc
+
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+JAVA_HOME=/usr/java/jdk1.8.0_121
+HADOOP_HOME=/hadoop2
+PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+export PATH
+
+
+
+
+
+
+
+Note :    you will find  files something like given below
+
+[root@namenode hadoop]# cd /hadoop2/etc/hadoop/
+[root@namenode hadoop]# ls
+capacity-scheduler.xml      hadoop-policy.xml        kms-log4j.properties        slaves
+configuration.xsl           hdfs-site.xml            kms-site.xml                ssl-client.xml.example
+container-executor.cfg      httpfs-env.sh            log4j.properties            ssl-server.xml.example
+core-site.xml               httpfs-log4j.properties  mapred-env.cmd              yarn-env.cmd
+hadoop-env.cmd              httpfs-signature.secret  mapred-env.sh               yarn-env.sh
+hadoop-env.sh               httpfs-site.xml          mapred-queues.xml.template  yarn-site.xml
+hadoop-metrics2.properties  kms-acls.xml             mapred-site.xml
+hadoop-metrics.properties   kms-env.sh               mapred-site.xml.template
+
+Now  setting  some important file for  HDFS cluster  : 
+
+1.   In hadoop-env.sh  setup  jdk  path  then it will look like this
+
+[root@namenode hadoop]# cat   hadoop-env.sh 
+# The only required environment variable is JAVA_HOME.  All others are
+# set JAVA_HOME in this file, so that it is correctly defined on
+export JAVA_HOME=/usr/java/jdk1.8.0_121
+
+2.   hdfs-site.xml  will look like this 
+
+[root@namenode hadoop]# cat hdfs-site.xml 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+<name>dfs.namenode.name.dir</name>
+<value>/nnnhhh22</value>
+</property>
+</configuration>
+
+3.   core-site.xml  will look like this
+
+[root@namenode hadoop]# cat core-site.xml 
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+<property>
+<name>fs.defaultFS</name>
+<value>hdfs://192.168.10.120:10002</value>
+</property>
+</configuration>
+
+
+
+Now :     Format  namenode  and  start  service  
+
+[root@namenode hadoop]# hdfs  namenode -format 
+
+Start  the service of namenode  and  datanode 
+
+[root@namenode hadoop]# hadoop-daemon.sh  start  namenode 
+
+
+Now  setup datanode  : 
+
+
+Note:    Repeat  the same for installing  jdk and hadoop v2
+
+now  setup  datanode  and make entry in
+
+ hdfs-site.xml 
+
+
+[root@datanode1 hadoop]# cat hdfs-site.xml 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+<name>dfs.datanode.data.dir</name>
+<value>/nnnhhh22ddnn</value>
+</property>
+
+
+</configuration>
+
+[root@datanode1 hadoop]#  cat core-site.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+<property>
+<name>fs.defaultFS</name>
+<value>hdfs://192.168.10.120:10002</value>
+</property>
+</configuration>
+
+[root@datanode1 hadoop]# hadoop-daemon.sh  start  datanode
+
+
+
+Now  time  for  Yarn cluster setup :
+
+MR2 support 3 framework named:
+
+Local : only run locally and only require master service to run
+(resourcemanager)
+
+Classic : run MR1 framework
+Yarn : run on multinode cluster require nodemanager, and require
+container service for mapreduce_shuffle at nodemanger side
+
+.  Resource manager  & client are same node
+
+[root@namenode hadoop]# cat  mapred-site.xml
+
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+<name>mapreduce.framework.name</name>
+        <value>yarn</value>
+</property>
+</configuration>
+
+
+[root@namenode hadoop]# cat  yarn-site.xml
+
+
+<property>
+<name>yarn.resourcemanager.resource-tracker.address</name>
+<value>resource_masterip:8025</value>
+</property>
+
+<property>
+<name>yarn.resourcemanager.scheduler.address</name>
+<value>resource_masterip:8030</value>
+</property>
+ 
+<property>
+<name>yarn.resourcemanager.address</name>
+<value>resource_masterip:8032</value>
+</property>
+
+[root@namenode hadoop]#   yarn-daemon.sh  start resourcemanager
+
+
+
+
+
+Now  for Nodemanager :  (slave)
+
+---------------------------------------------
+
+
+vim yarn-site.xml
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+
+<property>
+<name>yarn.resourcemanager.resource-tracker.address</name>
+<value>resource_masterip:8025</value>
+</property>
