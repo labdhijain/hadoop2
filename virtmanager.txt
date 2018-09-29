@@ -1,0 +1,17 @@
+>>> fdisk /dev/vdb
+>>> partprobe
+>>> pvcreate /dev/vdb1
+>>> vgextend rhel /dev/vdb1
+>>> lvextend --size +10G /dev/rhel/root
+>>> xfs_growfs /dev/mapper/rhel-root
+>>> df -h
+
+fdisk -lf
+   63  fdisk /dev/vdb
+   64  partprobe
+   65  lvdisplay
+   66  pvcreate /dev/vdb1	
+   67  vgextend rhel /dev/vdb1
+   68  lvextend --size +10G /dev/rhel/root 
+   69  xfs_growfs /dev/mapper/rhel-root 
+70 df -h
