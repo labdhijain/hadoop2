@@ -1,0 +1,158 @@
+Pig Latin Data Model
+
+---Atom
+
+Any single value in Pig Latin, irrespective of their data, type is known as an Atom.A piece of data or a simple atomic value is known as a field.
+
+Example − ‘raja’ or ‘30’
+
+---Tuple
+
+A record that is formed by an ordered set of fields is known as a tuple, the fields can be of any type. A tuple is similar to a row in a table of RDBMS.
+
+Example − (Raja, 30)
+
+
+---Bag
+
+A bag is an unordered set of tuples. In other words, a collection of tuples (non-unique) is known as a bag
+Example − {(Raja, 30), (Mohammad, 45)}
+
+A bag can be a field in a relation; in that context, it is known as inner bag.
+
+Example − {Raja, 30, {9848022338, raja@gmail.com,}}
+
+---Map
+
+A map (or data map) is a set of key-value pairs. The key needs to be of type chararray and should be unique. The value might be of any type. It is represented by ‘[]’
+
+Example − [name#Raja, age#30]
+
+---Relation
+
+A relation is a bag of tuples. The relations in Pig Latin are unordered (there is no guarantee that tuples are processed in any particular order).
+
+
+
+Download pig from wget https://www.apache.org/dist/pig/pig-0.17.0/pig-0.17.0.tar.gz
+
+untar this tar -xvzf pig-0.17.0.tar.gz
+mv pig-0.17.0 /pig
+
+vim /root/.bashrc or vim ~/.bashrc
+
+export PIG_HOME=/pig
+export PATH=$PATH:$PIG_HOME/bin
+export PIG_CLASSPATH=$HADOOP_HOME/conf
+
+exec bash or source ~/.bashrc
+
+
+to run pig in local or map reduce system
+pig -x local
+pig -x mapreduce
+
+
+
+###########################################################
+
+
+Hive
+
+wget http://www-eu.apache.org/dist/hive/hive-3.1.0/apache-hive-3.1.0-bin.tar.gz
+ls
+   72 tar -xvzf apache-hive-3.1.0-bin.tar.gz 
+   73  ls
+   74  mv apache-hive-3.1.0-bin /hive
+   75  ls
+   76  cd /
+   77  ls
+   78  cd
+   79  vim /root/.bashrc
+	export HIVE_HOME=/hive
+	export PATH=$PATH:$HIVE_HOME/bin
+
+   80  exec bash
+   81  cd /hive/conf/
+   82  ls
+   83  vim hive-env.sh.template 
+	export HADOOP_HOME=/hadoop2
+
+   85  cd
+	in Hadoop 1 we have to install derby tar file and give path to bashrc file 
+	but in Hadoop 2 we have to type this command and derby meta file will install automatilly
+   86  schematool -initSchema -dbType derby
+	ls
+	you will see derby.log
+
+When u install hive there will be default directot will make in hdfs name tem/hive/root
+You have to give permission to dirctory /tem/hive/root
+
+hadoop fs -chmod 777 /tmp/hive/root
+
+######################################################################
+scala need for spark
+
+wget https://scala-lang.org/files/archive/scala-2.12.6.tgz
+tar -xvf scala-2.12.6.tgz
+mv scala-2.12.6 /scala
+vim /root/.bashrc
+export PATH = $PATH:/usr/local/scala/bin
+exec bash
+scala -version 
+scala
+
+###############################################
+
+spark
+
+wget https://archive.apache.org/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.7.tgz
+tar -xvf spark-2.3.0-bin-hadoop2.7.tgz
+mv spark-2.3.0-bin-hadoop2.7 /spark
+
+vim /root/.bashrc
+export  SPARK_HOME=/spark
+export PATH=$SPARK_HOME/bin:$PATH
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.6-src.zip:$PYTHONPATH
+export PATH=$SPARK_HOME/python:$JAVA_HOME/bin:$PATH
+
+exec bash
+
+---to run spark
+spark-shell
+
+--- to run python on spark
+pyspark
+
+to see spark in browser
+    namenode IP	       port
+http://192.168.122.228:4040
+###############################################
+
+vim /root/.bashrc or vim ~/.bashrc
+
+#Java
+export JAVA_HOME=/usr/java/jdk1.8.0_121
+export HADOOP_HOME=/hadoop2
+export PATH=$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+
+#Hive
+export HIVE_HOME=/hive
+export PATH=$PATH:$HIVE_HOME/bin
+export  PATH
+
+#Pig
+export PIG_HOME=/pig
+export PATH=$PATH:/pig/bin
+export PIG_CLASSPATH=$HADOOP_HOME/conf
+
+#Scala
+export PATH=$PATH:/scala/bin
+
+#Spark
+export SPARK_HOME=/spark
+export PATH=$SPARK_HOME/bin:$PATH
+export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.6-src.zip:$PYTHONPATH
+export PATH=$SPARK_HOME/python:$JAVA_HOME/bin:$PATH
+
+exec .bash or source ~/.bashrc
